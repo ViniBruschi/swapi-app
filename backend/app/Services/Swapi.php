@@ -3,7 +3,7 @@
 namespace App\Services\Api;
 use Illuminate\Support\Facades\Http;
 
-class SwapiApi
+class Swapi
 {
     private $baseURL = 'https://www.swapi.tech/api/';
 
@@ -13,7 +13,7 @@ class SwapiApi
         $response = Http::timeout(5)->get($url, $params);
 
         if (!$response->ok()) {
-            throw new \Exception('Erro ao consultar SWAPI');
+            throw new \Exception('Error consulting SWAPI');
         }
         return $response->json();
     }
