@@ -2,7 +2,8 @@
 
 namespace App\Services;
 
-use App\Services\Api\Swapi;
+use App\Services\Swapi;
+use App\Models\SwapiLog;
 
 class SwapiService{
     private Swapi $api;
@@ -15,11 +16,42 @@ class SwapiService{
     public function search(string $type, string $query)
     {
         $params = ['name' => $query];
-        if(in_array($type, self::TYPES, true)) {
+        $endpoint = 'https://www.swapi.tech/api/' . $type;
+        $start = microtime(true);
+
+        try {
+
+            if (!in_array($type, self::TYPES, true)) {
+                throw new \Exception('Error: invalid type');
+            }
+
             $result = $this->api->search($type, $params);
-        } else {
-            throw new \Exception('Error: invalid type');
+            $time = (int) ((microtime(true) - $start) * 1000);
+            SwapiLog::create([
+                'type' => $type,
+                'query' => $query,
+                'endpoint' => $endpoint,
+                'response_time_ms' => $time,
+                'status' => 'success',
+                'created_at' => now(),
+                ]);
+
+            return $result;
+
+        } catch (\Throwable $th) {
+            $time = (int) ((microtime(true) - $start) * 1000);
+
+            SwapiLog::create([
+                'type' => $type,
+                'query' => $query,
+                'endpoint' => $endpoint,
+                'response_time_ms' => $time,
+                'status' => 'error',
+                'error_message' => $th->getMessage(),
+                'created_at' => now(),
+            ]);
+
+            throw $th;
         }
-        return $result;
     }
 }
