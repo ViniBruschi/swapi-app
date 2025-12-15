@@ -23,7 +23,17 @@ services:
     depends_on:
       - backend
 
-  # frontend:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: swapi-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - nginx
 
   mysql:
     image: mysql:8.0-debian
