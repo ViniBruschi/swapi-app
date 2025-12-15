@@ -9,7 +9,8 @@ class SwapiService{
     private Swapi $api;
     private const TYPES = ['people', 'films', 'starships', 'vehicles', 'species', 'planets'];
 
-    public function __construct(Swapi $api){
+    public function __construct(Swapi $api)
+    {
         $this->api = $api;
     }
 

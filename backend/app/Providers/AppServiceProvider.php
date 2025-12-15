@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Swapi;
+use App\Services\SwapiService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +13,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(SwapiService::class, function($app) {
+            return new SwapiService(new Swapi());
+        });
     }
 
     /**
@@ -19,6 +23,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->loadRoutesFrom(base_path('routes/api.php'));
     }
 }
