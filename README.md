@@ -31,7 +31,7 @@ Before starting, make sure you have installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone [<repository-url>](https://github.com/ViniBruschi/swapi-app.git)
 cd my-laravel-projects
 ```
 
