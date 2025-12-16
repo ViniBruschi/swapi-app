@@ -51,6 +51,9 @@ function App() {
 
   return (
     <div className="page">
+      <header className="app-header">
+        <h1>SWStarter</h1>
+      </header>
       <div className="card">
         <SearchForm
           searchType={searchType}
