@@ -13,6 +13,7 @@ function App() {
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [movieId, setMovieId] = useState(null);
+  const [movieFromSearch, setMovieFromSearch] = useState(false);
 
   const handleSearch = async () => {
     if (!searchTerm) return;
@@ -37,16 +38,24 @@ function App() {
   };
 
   const handleSeeDetails = (item) => {
-    setSelectedItem(item);
+    if (item.properties.title) {
+      setMovieId(item.uid);
+      setMovieFromSearch(true); // Vem de uma busca direta por filmes
+    } else {
+      setSelectedItem(item);
+      setMovieFromSearch(false);
+    }
   };
 
   const handleSeeMovie = (id) => {
     setMovieId(id);
+    setMovieFromSearch(false); // Vem de um personagem
   };
 
   const handleBack = () => {
     setSelectedItem(null);
     setMovieId(null);
+    setMovieFromSearch(false);
   };
 
   return (
@@ -83,7 +92,11 @@ function App() {
           )}
 
           {movieId && (
-            <MovieDetailsPanel movieId={movieId} onBack={handleBack} />
+            <MovieDetailsPanel 
+              movieId={movieId} 
+              onBack={handleBack}
+              showCharacters={movieFromSearch}
+            />
           )}
         </div>
       </div>

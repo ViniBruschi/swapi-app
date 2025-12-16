@@ -45,12 +45,22 @@ class SwapiController extends Controller
     {
         try {
             $film = $this->service->getFilmById($id);
-            return response()->json([
-                'title' => $film['title']
-            ], 200);
+            return response()->json($film, 200);
         } catch (\Throwable $e) {
             return response()->json([
                 'error' => 'Film not found'
+            ], 404);
+        }
+    }
+
+    public function getPerson(string $id): JsonResponse
+    {
+        try {
+            $person = $this->service->getPersonById($id);
+            return response()->json($person, 200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'error' => 'Person not found'
             ], 404);
         }
     }

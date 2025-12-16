@@ -91,5 +91,42 @@ class SwapiService{
 
             throw $th;
         }
+    }
+
+    public function getPersonById(string $id)
+    {
+        $endpoint = "https://www.swapi.tech/api/people/{$id}";
+        $start = microtime(true);
+    
+        try {
+            $result = $this->api->search("people/{$id}", []);
+            $time = (int) ((microtime(true) - $start) * 1000);
+
+            SwapiLog::create([
+                'type' => 'people',
+                'query' => $id,
+                'endpoint' => $endpoint,
+                'response_time_ms' => $time,
+                'status' => 'success',
+                'created_at' => now(),
+            ]);
+    
+            return $result['result'];
+
+        } catch (\Throwable $th) {
+            $time = (int) ((microtime(true) - $start) * 1000);
+
+            SwapiLog::create([
+                'type' => 'people',
+                'query' => $id,
+                'endpoint' => $endpoint,
+                'response_time_ms' => $time,
+                'status' => 'error',
+                'error_message' => $th->getMessage(),
+                'created_at' => now(),
+            ]);
+
+            throw $th;
+        }
     }    
 }
