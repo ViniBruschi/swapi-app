@@ -40,4 +40,18 @@ class SwapiController extends Controller
             ], 500);
         }
     }
+
+    public function getFilmTitle(string $id): JsonResponse
+    {
+        try {
+            $film = $this->service->getFilmById($id);
+            return response()->json([
+                'title' => $film['title']
+            ], 200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'error' => 'Film not found'
+            ], 404);
+        }
+    }
 }
