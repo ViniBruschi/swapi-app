@@ -3,6 +3,7 @@ import SearchForm from "./components/SearchForm";
 import ResultsPanel from "./components/ResultsPanel";
 import DetailsPanel from "./components/DetailsPanel";
 import MovieDetailsPanel from "./components/MovieDetailsPanel";
+import "./App.css";
 
 function App() {
   const [searchType, setSearchType] = useState("people");
@@ -11,18 +12,22 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [movieUrl, setMovieUrl] = useState(null);
+  const [movieId, setMovieId] = useState(null);
 
   const handleSearch = async () => {
     if (!searchTerm) return;
+
     setLoading(true);
     setError(null);
 
     try {
-      const res = await fetch(`/api/swapi/${searchType}?q=${encodeURIComponent(searchTerm)}`);
+      const res = await fetch(
+        `/api/swapi/${searchType}?q=${encodeURIComponent(searchTerm)}`
+      );
+
       if (!res.ok) throw new Error("Network response was not ok");
+
       const data = await res.json();
-      console.log(data)
       setResults(data.result || []);
     } catch (err) {
       setError(err.message);
@@ -32,42 +37,53 @@ function App() {
   };
 
   const handleSeeDetails = (item) => {
-    if (searchType === "films") {
-      setMovieUrl(item.properties.url);
-    } else {
-      setSelectedItem(item);
-    }
+    setSelectedItem(item);
+  };
+
+  const handleSeeMovie = (id) => {
+    setMovieId(id);
   };
 
   const handleBack = () => {
     setSelectedItem(null);
-    setMovieUrl(null);
+    setMovieId(null);
   };
 
   return (
-    <div style={{ display: "flex", padding: 20 }}>
-      {!selectedItem && !movieUrl ? (
-        <>
-          <SearchForm
-            searchType={searchType}
-            setSearchType={setSearchType}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            onSearch={handleSearch}
-            loading={loading}
-          />
-          <ResultsPanel
-            results={results}
-            loading={loading}
-            error={error}
-            onSeeDetails={handleSeeDetails}
-          />
-        </>
-      ) : selectedItem ? (
-        <DetailsPanel item={selectedItem} onBack={handleBack} />
-      ) : (
-        <MovieDetailsPanel movieUrl={movieUrl} onBack={handleBack} />
-      )}
+    <div className="page">
+      <div className="card">
+        <SearchForm
+          searchType={searchType}
+          setSearchType={setSearchType}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          onSearch={handleSearch}
+          loading={loading}
+        />
+
+        <div className="panel-right">
+          {!selectedItem && !movieId && (
+            <ResultsPanel
+              results={results}
+              loading={loading}
+              error={error}
+              onSeeDetails={handleSeeDetails}
+            />
+          )}
+
+          {selectedItem && (
+            <DetailsPanel
+              item={selectedItem}
+              onSeeMovie={handleSeeMovie}
+              onBack={handleBack}
+            />
+          )}
+
+          {movieId && (
+            <MovieDetailsPanel movieId={movieId} onBack={handleBack} />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

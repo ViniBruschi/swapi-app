@@ -1,18 +1,16 @@
-import React from "react";
-
 export default function SearchForm({
   searchType,
   setSearchType,
   searchTerm,
   setSearchTerm,
   onSearch,
-  loading
+  loading,
 }) {
   return (
-    <div style={{ flex: 1, marginRight: 20 }}>
+    <div className="panel panel-left">
       <h2>What are you searching for?</h2>
-      
-      <div>
+
+      <div style={{ marginBottom: 12 }}>
         <label>
           <input
             type="radio"
@@ -22,7 +20,8 @@ export default function SearchForm({
           />
           People
         </label>
-        <label>
+
+        <label style={{ marginLeft: 12 }}>
           <input
             type="radio"
             value="films"
@@ -35,24 +34,12 @@ export default function SearchForm({
 
       <input
         type="text"
-        placeholder={searchType === "people" ? "e.g. Chewbacca, Yoda, Boba Fett" : "e.g. A New Hope"}
+        placeholder="e.g. Chewbacca, Yoda, Boba Fett"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        style={{ display: "block", marginTop: 10, width: "100%" }}
       />
 
-      <button
-        onClick={onSearch}
-        disabled={!searchTerm || loading}
-        style={{
-          marginTop: 10,
-          backgroundColor: !searchTerm || loading ? "#ccc" : "green",
-          color: "white",
-          padding: "8px 16px",
-          border: "none",
-          cursor: !searchTerm || loading ? "not-allowed" : "pointer"
-        }}
-      >
+      <button onClick={onSearch} disabled={!searchTerm || loading}>
         {loading ? "SEARCHING..." : "SEARCH"}
       </button>
     </div>

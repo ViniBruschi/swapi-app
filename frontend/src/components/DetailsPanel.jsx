@@ -1,19 +1,7 @@
-import { useState, useEffect } from "react";
-
-export default function DetailsPanel({ item, onBack }) {
+export default function DetailsPanel({ item, onSeeMovie, onBack }) {
   const props = item.properties;
-  const [filmTitles, setFilmTitles] = useState({});
 
-  useEffect(() => {
-    props.films.forEach(async (filmUrl) => {
-      const id = filmUrl.split("/").filter(Boolean).pop();
-      const res = await fetch(`/api/swapi/films/${id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setFilmTitles((prev) => ({ ...prev, [id]: data.title }));
-      }
-    });
-  }, [props.films]);
+  const extractId = (url) => url.split("/").filter(Boolean).pop();
 
   return (
     <div>
@@ -35,8 +23,17 @@ export default function DetailsPanel({ item, onBack }) {
         <h3>Movies</h3>
         <ul>
           {props.films.map((filmUrl) => {
-            const id = filmUrl.split("/").filter(Boolean).pop();
-            return <li key={id}>{filmTitles[id] || "Loading..."}</li>;
+            const id = extractId(filmUrl);
+            return (
+              <li key={id}>
+                <button
+                  className="link"
+                  onClick={() => onSeeMovie(id)}
+                >
+                  Film {id}
+                </button>
+              </li>
+            );
           })}
         </ul>
       </section>

@@ -64,7 +64,7 @@ class SwapiService{
         try {
             $result = $this->api->search("films/{$id}", []);
             $time = (int) ((microtime(true) - $start) * 1000);
-    
+
             SwapiLog::create([
                 'type' => 'films',
                 'query' => $id,
@@ -75,10 +75,10 @@ class SwapiService{
             ]);
     
             return $result['result']['properties'];
-    
+
         } catch (\Throwable $th) {
             $time = (int) ((microtime(true) - $start) * 1000);
-    
+
             SwapiLog::create([
                 'type' => 'films',
                 'query' => $id,
@@ -88,7 +88,7 @@ class SwapiService{
                 'error_message' => $th->getMessage(),
                 'created_at' => now(),
             ]);
-    
+
             throw $th;
         }
     }    
