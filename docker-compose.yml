@@ -10,6 +10,32 @@ services:
     depends_on:
       - mysql
 
+  scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: swapi-scheduler
+    restart: unless-stopped
+    command: php artisan schedule:work
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - mysql
+      - backend
+
+  queue:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: swapi-queue
+    restart: unless-stopped
+    command: php artisan queue:work --tries=3
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - mysql
+      - backend
+
   nginx:
     build:
       context: ./backend/nginx

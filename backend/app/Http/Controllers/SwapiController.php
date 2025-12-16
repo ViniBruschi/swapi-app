@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ComputeSwapiStatistics;
+use App\Models\SwapiStatistic;
 use App\Services\SwapiService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -63,5 +65,31 @@ class SwapiController extends Controller
                 'error' => 'Person not found'
             ], 404);
         }
+    }
+
+    public function getStatistics(): JsonResponse
+    {
+        $statistics = SwapiStatistic::first();
+
+        if (!$statistics) {
+            (new ComputeSwapiStatistics())->handle();
+            $statistics = SwapiStatistic::first();
+        }
+
+        if (!$statistics) {
+            return response()->json([
+                'top_queries' => [],
+                'avg_response_time_ms' => 0,
+                'most_popular_hour' => null,
+                'computed_at' => null,
+            ], 200);
+        }
+
+        return response()->json([
+            'top_queries' => $statistics->top_queries,
+            'avg_response_time_ms' => $statistics->avg_response_time_ms,
+            'most_popular_hour' => $statistics->most_popular_hour,
+            'computed_at' => $statistics->computed_at ? $statistics->computed_at->format('c') : null,
+        ], 200);
     }
 }
