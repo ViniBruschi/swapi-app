@@ -63,6 +63,7 @@ services:
 
   mysql:
     image: mysql:8.0-debian
+    platform: linux/amd64
     container_name: swapi-mysql
     restart: unless-stopped
     environment:

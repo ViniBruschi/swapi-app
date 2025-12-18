@@ -31,7 +31,7 @@ Before starting, make sure you have installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone [<repository-url>](https://github.com/ViniBruschi/swapi-app.git)
+git clone https://github.com/ViniBruschi/swapi-app.git
 cd my-laravel-projects
 ```
 
@@ -58,6 +58,29 @@ DB_PASSWORD=password
 ```
 
 > **Note**: Database credentials are already configured in `docker-compose.yml`. You can use these same credentials in `.env` or change them as needed.
+
+## Docker Configuration for macOS (Apple Silicon – M1/M2/M3)
+
+On macOS machines with Apple Silicon, the MySQL container may present compatibility issues if the platform is not explicitly defined.
+
+Add the `platform` directive to the MySQL service:
+
+```yaml
+services:
+  mysql:
+    image: mysql:8.0
+    platform: linux/amd64
+    environment:
+      MYSQL_DATABASE: app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+```
+### Note
+
+Without this configuration, the MySQL container may fail to start or behave unpredictably on ARM-based Macs.
 
 ### 3. Start the Containers
 
