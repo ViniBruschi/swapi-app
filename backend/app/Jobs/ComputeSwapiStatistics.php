@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ComputeSwapiStatistics implements ShouldQueue
@@ -33,6 +34,7 @@ class ComputeSwapiStatistics implements ShouldQueue
                     'computed_at' => now(),
                 ]
             );
+            Cache::forget('swapi_statistics_processing');
             return;
         }
 
@@ -73,5 +75,7 @@ class ComputeSwapiStatistics implements ShouldQueue
                 'computed_at' => now(),
             ]
         );
+
+        Cache::forget('swapi_statistics_processing');
     }
 }

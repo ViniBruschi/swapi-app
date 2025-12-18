@@ -99,21 +99,33 @@ class SwapiController extends Controller
     {
         $statistics = SwapiStatistic::first();
 
-        if (!$statistics) {
-            (new ComputeSwapiStatistics())->handle();
-            $statistics = SwapiStatistic::first();
-        }
+        if (!$statistics && !Cache::has('swapi_statistics_processing')) {
+            Cache::put('swapi_statistics_processing', true, now()->addMinutes(15));
+            ComputeSwapiStatistics::dispatch();
 
-        if (!$statistics) {
             return response()->json([
+                'status' => 'processing',
+                'message' => 'Statistics are being computed. Please try again in a few moments.',
                 'top_queries' => [],
                 'avg_response_time_ms' => 0,
                 'most_popular_hour' => null,
                 'computed_at' => null,
-            ], 200);
+            ], 202);
+        }
+
+        if (Cache::has('swapi_statistics_processing')) {
+            return response()->json([
+                'status' => 'processing',
+                'message' => 'Statistics are being computed. Please try again in a few moments.',
+                'top_queries' => $statistics?->top_queries ?? [],
+                'avg_response_time_ms' => $statistics?->avg_response_time_ms ?? 0,
+                'most_popular_hour' => $statistics?->most_popular_hour ?? null,
+                'computed_at' => $statistics?->computed_at?->format('c') ?? null,
+            ], 202);
         }
 
         return response()->json([
+            'status' => 'completed',
             'top_queries' => $statistics->top_queries,
             'avg_response_time_ms' => $statistics->avg_response_time_ms,
             'most_popular_hour' => $statistics->most_popular_hour,
