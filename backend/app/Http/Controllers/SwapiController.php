@@ -7,6 +7,8 @@ use App\Models\SwapiStatistic;
 use App\Services\SwapiService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Validator;
 
 class SwapiController extends Controller
 {
@@ -19,16 +21,22 @@ class SwapiController extends Controller
 
     public function search(Request $request, string $type): JsonResponse
     {
-        $query = $request->query('q');
+        $typeValidator = Validator::make(['type' => $type], [
+            'type' => ['required', 'string', 'in:people,films,starships,vehicles,species,planets']
+        ]);
 
-    if (!$query) {
+        if ($typeValidator->fails()) {
             return response()->json([
-                'error' => 'Query parameter "q" is required'
+                'error' => 'Invalid type. Allowed types: people, films, starships, vehicles, species, planets'
             ], 400);
         }
 
+        $validated = $request->validate([
+            'q' => ['required', 'string', 'min:1', 'max:255']
+        ]);
+
         try {
-            $result = $this->service->search($type, $query);
+            $result = $this->service->search($type, $validated['q']);
 
             return response()->json($result, 200);
 
@@ -45,6 +53,16 @@ class SwapiController extends Controller
 
     public function getFilmTitle(string $id): JsonResponse
     {
+        $validator = Validator::make(['id' => $id], [
+            'id' => ['required', 'string', 'min:1']
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => 'Invalid film ID'
+            ], 400);
+        }
+
         try {
             $film = $this->service->getFilmById($id);
             return response()->json($film, 200);
@@ -57,6 +75,16 @@ class SwapiController extends Controller
 
     public function getPerson(string $id): JsonResponse
     {
+        $validator = Validator::make(['id' => $id], [
+            'id' => ['required', 'string', 'min:1']
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => 'Invalid person ID'
+            ], 400);
+        }
+
         try {
             $person = $this->service->getPersonById($id);
             return response()->json($person, 200);
