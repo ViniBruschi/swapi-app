@@ -32,7 +32,7 @@ Before starting, make sure you have installed:
 
 ```bash
 git clone https://github.com/ViniBruschi/swapi-app.git
-cd my-laravel-projects
+cd swapi-app
 ```
 
 ### 2. Configure the Environment
