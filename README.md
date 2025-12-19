@@ -100,6 +100,8 @@ This command will:
 Run the commands inside the backend container:
 
 ```bash
+docker-compose exec backend mkdir bootstrap/cache
+docker-compose exec backend chmod -R 777 bootstrap/cache
 docker-compose exec backend composer install
 docker-compose exec backend php artisan key:generate
 docker-compose exec backend php artisan migrate
