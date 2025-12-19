@@ -1,8 +1,8 @@
 services:
   backend:
+    image: swapi-backend
     build:
       context: ./backend
-      dockerfile: Dockerfile
     container_name: swapi-backend
     restart: unless-stopped
     volumes:
@@ -11,9 +11,7 @@ services:
       - mysql
 
   scheduler:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: swapi-backend
     container_name: swapi-scheduler
     restart: unless-stopped
     command: php artisan schedule:work
@@ -24,9 +22,7 @@ services:
       - backend
 
   queue:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: swapi-backend
     container_name: swapi-queue
     restart: unless-stopped
     command: php artisan queue:work --tries=3
@@ -39,8 +35,7 @@ services:
   nginx:
     build:
       context: ./backend/nginx
-      dockerfile: Dockerfile
-    container_name: nginx
+    container_name: swapi-nginx
     restart: unless-stopped
     ports:
       - "9000:80"
@@ -52,7 +47,6 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
     container_name: swapi-frontend
     ports:
       - "5173:5173"
@@ -76,6 +70,6 @@ services:
       - "3306:3306"
     volumes:
       - mysql-swapi-data:/var/lib/mysql
-  
+
 volumes:
-    mysql-swapi-data:
+  mysql-swapi-data:
